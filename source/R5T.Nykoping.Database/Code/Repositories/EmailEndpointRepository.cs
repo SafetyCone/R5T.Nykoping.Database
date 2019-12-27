@@ -11,17 +11,12 @@ using EmailEndpointEntity = R5T.Nykoping.Database.Entities.EmailEndpoint;
 
 namespace R5T.Nykoping.Database
 {
-    public class EmailEndpointRepository : DatabaseRepositoryBase<EmailEndpointDbContext>, IEmailEndpointRepository
+    public class EmailEndpointRepository<TDbContext> : ProvidedDatabaseRepositoryBase<TDbContext>, IEmailEndpointRepository
+        where TDbContext: DbContext, IEmailEndpointDbContext
     {
-        public EmailEndpointRepository(DbContextOptions<EmailEndpointDbContext> dbContextOptions)
-            : base(dbContextOptions)
+        public EmailEndpointRepository(DbContextOptions<TDbContext> dbContextOptions, IDbContextProvider<TDbContext> dbContextProvider)
+            : base(dbContextOptions, dbContextProvider)
         {
-        }
-
-        public override EmailEndpointDbContext GetNewDbContext()
-        {
-            var dbContext = new EmailEndpointDbContext(this.DbContextOptions);
-            return dbContext;
         }
 
         public void Add(EndpointIdentity endpoint, string emailAddress)
