@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -19,9 +20,9 @@ namespace R5T.Nykoping.Database
         {
         }
 
-        public void Add(EndpointIdentity endpoint, string emailAddress)
+        public async Task Add(EndpointIdentity endpoint, string emailAddress)
         {
-            this.ExecuteInContext(dbContext =>
+            await this.ExecuteInContextAsync(async dbContext =>
             {
                 var entity = new EmailEndpointEntity()
                 {
@@ -31,15 +32,15 @@ namespace R5T.Nykoping.Database
 
                 dbContext.Add(entity);
 
-                dbContext.SaveChanges();
+                await dbContext.SaveChangesAsync();
             });
         }
 
-        public bool Exists(EndpointIdentity endpoint)
+        public async Task<bool> Exists(EndpointIdentity endpoint)
         {
-            var exists = this.ExecuteInContext(dbContext =>
+            var exists = await this.ExecuteInContextAsync(async dbContext =>
             {
-                var entity = dbContext.EmailEndpoints.Where(x => x.EndpointGUID == endpoint.Value).SingleOrDefault();
+                var entity = await dbContext.GetEmailEndpoint(endpoint).SingleOrDefaultAsync();
 
                 var output = entity is object;
                 return output;
@@ -48,11 +49,11 @@ namespace R5T.Nykoping.Database
             return exists;
         }
 
-        public bool HasEmailAddress(EndpointIdentity endpoint)
+        public async Task<bool> HasEmailAddress(EndpointIdentity endpoint)
         {
-            var hasEmailAddress = this.ExecuteInContext(dbContext =>
+            var hasEmailAddress = await this.ExecuteInContextAsync(async dbContext =>
             {
-                var emailAddress = dbContext.EmailEndpoints.Where(x => x.EndpointGUID == endpoint.Value).Select(x => x.EmailAddress).Single();
+                var emailAddress = await dbContext.GetEmailEndpoint(endpoint).Select(x => x.EmailAddress).SingleOrDefaultAsync();
 
                 var output = emailAddress is object;
                 return output;
@@ -61,26 +62,26 @@ namespace R5T.Nykoping.Database
             return hasEmailAddress;
         }
 
-        public string GetEmailAddress(EndpointIdentity endpoint)
+        public async Task<string> GetEmailAddress(EndpointIdentity endpoint)
         {
-            var emailAddress = this.ExecuteInContext(dbContext =>
+            var emailAddress = await this.ExecuteInContextAsync(async dbContext =>
             {
-                var output = dbContext.EmailEndpoints.Where(x => x.EndpointGUID == endpoint.Value).Select(x => x.EmailAddress).Single();
+                var output = await dbContext.GetEmailEndpoint(endpoint).Select(x => x.EmailAddress).SingleAsync();
                 return output;
             });
 
             return emailAddress;
         }
 
-        public void SetEmailAddress(EndpointIdentity endpoint, string emailAddress)
+        public async Task SetEmailAddress(EndpointIdentity endpoint, string emailAddress)
         {
-            this.ExecuteInContext(dbContext =>
+            await this.ExecuteInContextSync(async dbContext =>
             {
-                var entity = dbContext.EmailEndpoints.Where(x => x.EndpointGUID == endpoint.Value).Single();
+                var entity = await dbContext.GetEmailEndpoint(endpoint).SingleAsync();
 
                 entity.EmailAddress = emailAddress;
 
-                dbContext.SaveChanges();
+                await dbContext.SaveChangesAsync();
             });
         }
     }
