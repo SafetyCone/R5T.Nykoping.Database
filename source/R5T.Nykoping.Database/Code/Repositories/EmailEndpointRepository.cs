@@ -75,7 +75,7 @@ namespace R5T.Nykoping.Database
 
         public async Task SetEmailAddress(EndpointIdentity endpoint, string emailAddress)
         {
-            await this.ExecuteInContextSync(async dbContext =>
+            await this.ExecuteInContextAsync(async dbContext =>
             {
                 var entity = await dbContext.GetEmailEndpoint(endpoint).SingleAsync();
 
