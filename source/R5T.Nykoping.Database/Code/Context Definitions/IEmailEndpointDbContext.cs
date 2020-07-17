@@ -7,6 +7,6 @@ namespace R5T.Nykoping.Database
 {
     public interface IEmailEndpointDbContext
     {
-        DbSet<Entities.EmailEndpoint> EmailEndpoints { get; set; }
+        DbSet<Entities.EmailEndpoint> EmailEndpoints { get; }
     }
 }
