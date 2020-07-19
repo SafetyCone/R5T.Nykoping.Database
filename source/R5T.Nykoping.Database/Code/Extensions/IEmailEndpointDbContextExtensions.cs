@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using R5T.Endalia;
@@ -10,10 +11,18 @@ namespace R5T.Nykoping.Database
 {
     public static class IEmailEndpointDbContextExtensions
     {
-        public static IQueryable<EmailEndpointEntity> GetEmailEndpoint(this IEmailEndpointDbContext dbContext, EndpointIdentity endpointIdentity)
+        public static IQueryable<EmailEndpointEntity> GetEmailEndpoints(this IEmailEndpointDbContext emailEndpointDbContext, IEnumerable<EndpointIdentity> endpointIdentities)
         {
-            var emailEndpointQueryable = dbContext.EmailEndpoints.Where(x => x.EndpointGUID == endpointIdentity.Value);
-            return emailEndpointQueryable;
+            var identityValues = endpointIdentities.Select(x => x.Value).ToList();
+
+            var queryable = emailEndpointDbContext.EmailEndpoints.Where(x => identityValues.Contains(x.EndpointGUID));
+            return queryable;
+        }
+
+        public static IQueryable<EmailEndpointEntity> GetEmailEndpoint(this IEmailEndpointDbContext emailEndpointDbContext, EndpointIdentity endpointIdentity)
+        {
+            var queryable = emailEndpointDbContext.EmailEndpoints.Where(x => x.EndpointGUID == endpointIdentity.Value);
+            return queryable;
         }
     }
 }

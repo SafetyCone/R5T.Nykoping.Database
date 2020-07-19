@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -62,15 +63,21 @@ namespace R5T.Nykoping.Database
             return hasEmailAddress;
         }
 
-        public async Task<string> GetEmailAddress(EndpointIdentity endpoint)
+        public async Task<Dictionary<EndpointIdentity, string>> GetEmailAddressesByEndpointIdentity(IEnumerable<EndpointIdentity> endpointIdentities)
         {
-            var emailAddress = await this.ExecuteInContextAsync(async dbContext =>
+            var emailAddressesByEndpointIdentity = await this.ExecuteInContextAsync(async dbContext =>
             {
-                var output = await dbContext.GetEmailEndpoint(endpoint).Select(x => x.EmailAddress).SingleAsync();
+                var output = await dbContext
+                    .GetEmailEndpoints(endpointIdentities)
+                    .Select(x => new { x.EndpointGUID, x.EmailAddress })
+                    .ToDictionaryAsync(
+                        x => EndpointIdentity.From(x.EndpointGUID),
+                        x => x.EmailAddress);
+
                 return output;
             });
 
-            return emailAddress;
+            return emailAddressesByEndpointIdentity;
         }
 
         public async Task SetEmailAddress(EndpointIdentity endpoint, string emailAddress)
