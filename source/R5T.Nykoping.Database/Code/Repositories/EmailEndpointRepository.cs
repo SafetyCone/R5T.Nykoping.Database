@@ -91,5 +91,19 @@ namespace R5T.Nykoping.Database
                 await dbContext.SaveChangesAsync();
             });
         }
+
+        public async Task<List<EndpointIdentity>> GetEndpointIdentitiesByEmailAddress(string emailAddress)
+        {
+            var endpointIdentities = await this.ExecuteInContextAsync(async dbContext =>
+            {
+                var output = await dbContext.EmailEndpoints
+                    .Where(x => x.EmailAddress == emailAddress)
+                    .Select(x => EndpointIdentity.From(x.EndpointGUID))
+                    .ToListAsync();
+                return output;
+            });
+
+            return endpointIdentities;
+        }
     }
 }
