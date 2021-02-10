@@ -31,5 +31,26 @@ namespace R5T.Nykoping.Database
             var serviceAction = ServiceAction.New<IEmailEndpointRepository>(() => services.AddEmailEndpointRepository<TDbContext>());
             return serviceAction;
         }
+
+        /// <summary>
+        /// Adds the <see cref="PhoneEndpointRepository{TDbContext}"/> implementation of <see cref="IPhoneEndpointRepository"/> as a <see cref="ServiceLifetime.Singleton"/>.
+        /// </summary>
+        public static IServiceCollection AddPhoneEndpointRepository<TDbContext>(this IServiceCollection services)
+            where TDbContext: DbContext, IPhoneEndpointDbContext
+        {
+            services.AddSingleton<IPhoneEndpointRepository, PhoneEndpointRepository<TDbContext>>();
+
+            return services;
+        }
+
+        /// <summary>
+        /// Adds the <see cref="PhoneEndpointRepository{TDbContext}"/> implementation of <see cref="IPhoneEndpointRepository"/> as a <see cref="ServiceLifetime.Singleton"/>.
+        /// </summary>
+        public static IServiceAction<IPhoneEndpointRepository> AddPhoneEndpointRepositoryAction<TDbContext>(this IServiceCollection services)
+            where TDbContext : DbContext, IPhoneEndpointDbContext
+        {
+            var serviceAction = ServiceAction.New<IPhoneEndpointRepository>(() => services.AddPhoneEndpointRepository<TDbContext>());
+            return serviceAction;
+        }
     }
 }

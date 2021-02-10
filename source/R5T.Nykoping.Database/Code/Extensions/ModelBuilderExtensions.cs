@@ -13,5 +13,12 @@ namespace R5T.Nykoping.Database
 
             return modelBuilder;
         }
+
+        public static ModelBuilder ForPhoneEndpointDbContext(this ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Entities.PhoneEndpoint>().HasAlternateKey(x => x.EndpointGUID);
+
+            return modelBuilder;
+        }
     }
 }
