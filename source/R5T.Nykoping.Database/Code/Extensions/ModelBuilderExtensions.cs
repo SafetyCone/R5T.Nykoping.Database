@@ -20,5 +20,12 @@ namespace R5T.Nykoping.Database
 
             return modelBuilder;
         }
+
+        public static ModelBuilder ForWebformEndpointDbContext(this ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Entities.WebformEndpoint>().HasAlternateKey(x => x.EndpointGUID);
+
+            return modelBuilder;
+        }
     }
 }
